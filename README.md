@@ -83,6 +83,10 @@ what happen if we set the timeout request on the server service?
 Our partner have random delay but our server set the timeout request.
 we need to change the `Timeout` variable in server to some number, let say 3 second `const Timeout = 3` ([ref](https://github.com/ibrohhm/crash_and_timeout_simulation/blob/master/server/server.go#L16))
 
+```
+client --> server --[with timeout]--> partner (random delay)
+```
+
 this is the result
 
 https://github.com/user-attachments/assets/589afca9-6010-46c8-b68b-f3053f5676c3
