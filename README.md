@@ -57,7 +57,8 @@ client --> server --> partner
 ```
 
 this is result
-![image](https://github.com/user-attachments/assets/5db5f139-8597-4b69-9bc2-8fe164154134)
+
+https://github.com/user-attachments/assets/14db531c-6ca5-468b-bde9-30fbc84ab1ac
 
 ### Case 2
 Our partner service have random delay (`delay := time.Duration(rand.Intn(11))`) and our server service not set the timeout when request to partner service
@@ -67,6 +68,9 @@ client --> server --> partner (random delay)
 ```
 
 this is the result
+
+https://github.com/user-attachments/assets/4655345a-e8c9-42b0-ace9-61c2a7511eca
+
 ![image](https://github.com/user-attachments/assets/bdb8fae1-bf18-421d-af55-cc16a6bad7e8)
 
 our server got killed in 24 second since the memory usage exceed the MemoryLimit.
@@ -80,13 +84,14 @@ Our partner have random delay but our server set the timeout request.
 we need to change the `Timeout` variable in server to some number, let say 3 second `const Timeout = 3` ([ref](https://github.com/ibrohhm/crash_and_timeout_simulation/blob/master/server/server.go#L16))
 
 this is the result
-![image](https://github.com/user-attachments/assets/bf1dd883-6be9-4e9b-a8d4-a2dcc1fe5d54)
+
+https://github.com/user-attachments/assets/589afca9-6010-46c8-b68b-f3053f5676c3
 
 If you running the simulation, you'll see our server service not get killed from the exceed memory allocation.
 if you look more closely in the logger, the memory_usage of the server is always around 6MB - 12MB (never exceed the 20MB)
 this is because the timeout killed the ongoing request and release the memory allocation
 
-![image](https://github.com/user-attachments/assets/08bcb779-642b-4eab-ac07-75defb1742db)
+<img width="745" alt="image" src="https://github.com/user-attachments/assets/b3e0877f-03ba-4041-b751-7d5cc8df8cfd">
 
 ## Summaries
 The partner service behaviour is the external thing that we cannot control, we cannot trust the partner to have good behavior.
