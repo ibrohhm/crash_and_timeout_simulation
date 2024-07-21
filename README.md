@@ -1,6 +1,6 @@
 # Crash and Timeout Simulation
 
-Image you have apps that required called partner to server your data, the partner sometimes got unexpected behavior that we cannot control,
+Image you have apps that required called partner to served your data, the partner sometimes got unexpected behavior that we cannot control,
 let say it's random delay everytime you request from the partner. It's very tiny detail but if we are not handle the partner request well, it will causing our server down.
 This repo is focus on the simulation for your server to handle this partner behavior
 
