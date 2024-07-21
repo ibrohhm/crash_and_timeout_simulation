@@ -42,3 +42,56 @@ See the implementation: [client service](https://github.com/ibrohhm/crash_and_ti
 
 How to run: `go run client.go`
 
+## Simulation
+In this section we will do three simulation
+1. partner with no delay
+2. partner with random delay but no timeout set in the server
+3. partner with random delay with timeout set in the server
+
+### Case 1
+Every case always have happy case and this is it, our partner service have good spec and never got delay everytime we request.
+to make this possible you need to change the delay on partner code from `delay := time.Duration(rand.Intn(11))` to `delay := time.Duration(0)` ([ref](https://github.com/ibrohhm/crash_and_timeout_simulation/blob/master/partner/partner.go#L14))
+
+```
+client --> server --> partner
+```
+
+this is result
+![image](https://github.com/user-attachments/assets/5db5f139-8597-4b69-9bc2-8fe164154134)
+
+### Case 2
+Our partner service have random delay (`delay := time.Duration(rand.Intn(11))`) and our server service not set the timeout when request to partner service
+
+```
+client --> server --> partner (random delay)
+```
+
+this is the result
+![image](https://github.com/user-attachments/assets/bdb8fae1-bf18-421d-af55-cc16a6bad7e8)
+
+our server got killed in 24 second since the memory usage exceed the MemoryLimit.
+This is because the client service continuosly spawn new request using goroutine to call server service, since there's no limit on the number of goroutine being spawend,
+the server service request the partner service with hugh number. Because of the partner delay, most of the request running at the same time and consume all available memory then leading to a crash
+
+what happen if we set the timeout request on the server service?
+
+### Case 3
+Our partner have random delay but our server set the timeout request.
+we need to change the `Timeout` variable in server to some number, let say 3 second `const Timeout = 3` ([ref](https://github.com/ibrohhm/crash_and_timeout_simulation/blob/master/server/server.go#L16))
+
+this is the result
+![image](https://github.com/user-attachments/assets/bf1dd883-6be9-4e9b-a8d4-a2dcc1fe5d54)
+
+If you running the simulation, you'll see our server service not get killed from the exceed memory allocation.
+if you look more closely in the logger, the memory_usage of the server is always around 6MB - 12MB (never exceed the 20MB)
+this is because the timeout killed the ongoing request and release the memory allocation
+
+![image](https://github.com/user-attachments/assets/08bcb779-642b-4eab-ac07-75defb1742db)
+
+## Summaries
+The partner service behaviour is the external thing that we cannot control, we cannot trust the partner to have good behavior.
+sometimes it got delay, sometimes we cannot access it doe their internal error or else. the small delay maybe will cause our server down (like the simulation),
+so we better to prevent that happen and one way to prevent it is like adding the timeout when request to the server
+
+
+
